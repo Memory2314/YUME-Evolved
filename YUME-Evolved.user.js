@@ -986,7 +986,6 @@
                 var pageInner = document.querySelector('div.page_inner');
                 var mduiBtnG = document.createElement('mdui-segmented-button-group');
                 mduiBtnG.setAttribute('selects', 'single')
-                console.log(Pages);
                 // 判断是否可以跳转到首页
                 if (!Pages.includes(1)) {
                     addOption(mduiBtnG, 1, '首页')
