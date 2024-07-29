@@ -23,7 +23,7 @@
     var enableOptCreateDream = false; // 造梦优化
     var enableOptLock = false; // 仅自己图标优化
     var enableOptWorldLine = false; // 世界线优化
-    var enableOptPagePoints = true; // 页面指示器优化
+    var enableOptPagePoints = false; // 页面指示器优化
 
     // 开发者选项
     var enableload = true; // 启用初始化加载
