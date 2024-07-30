@@ -1024,7 +1024,7 @@
         }
 
         if (enableAddFAB) {
-            enableAddFAB()
+            addFAB()
         }
 
         if (enableRemovePanel) {
