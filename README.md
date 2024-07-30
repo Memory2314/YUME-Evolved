@@ -26,7 +26,7 @@
 
 | 正式版 (jsDelivr 源)                                                                                  | 正式版 (GitHub 源)                                                                                      |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [安装](https://cdn.jsdelivr.net/gh/Memory2314/YUME-Evolvedd@master-cdn/YUME-Evolved.user.js) | [安装](https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/YUME-Evolved.user.js) |
+| [安装](https://cdn.jsdelivr.net/gh/Memory2314/YUME-Evolved@master-cdn/YUME-Evolved.user.js) | [安装](https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/YUME-Evolved.user.js) |
 
 # 功能
 
