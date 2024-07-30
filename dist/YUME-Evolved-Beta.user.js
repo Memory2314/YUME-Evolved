@@ -4,19 +4,19 @@
 // @namespace    https://github.com/Memory2314/YUME-Evolved
 // @updateURL       https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
 // @downloadURL     https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
-// @version      1.0.0.20240730_beta
+// @version      1.0.1.20240730_beta
 // @author       Memory
 // @match        *://*.yume.ly/*
 // @grant        none
 // ==/UserScript==
 
-(function () {
+(function() {
     'use strict';
 
     // 用户选项 可控制开启(true)或关闭(false)
-    let enableCache = true; // 默认开启缓存, 建议开启
+    let enableCache = false; // 默认开启缓存, 建议开启
     var apiUrl = 'https://raw.gitmirror.com/Memory2314/YUME-API-collect/main/api/dream/alive'; // api地址
-    var enableDisableFormSubmission = true; // 禁止表单提交行为(用于修复替换后回车提交刷新的bug), 建议开启
+    var enableDisableFormSubmission = false; // 禁止表单提交行为(用于修复替换后回车提交刷新的bug), 建议开启
     var enableAddFAB = false; // 主页浮动按钮
     var enableRemovePanel = false; // 移除公告
     var enableRemoveTips = false; // 移除造梦提示
@@ -26,6 +26,9 @@
     var enableOptLock = false; // 仅自己图标优化
     var enableOptWorldLine = false; // 世界线优化
     var enableOptPagePoints = false; // 页面指示器优化
+    var enableAutoLogin = false; // 自动登录
+    var email = 'YourEmail'; // 你的用户名或Email地址
+    var password = 'YourPassword'; // 你的密码
 
     // 开发者选项
     var enableload = true; // 启用初始化加载
@@ -73,9 +76,9 @@
                 fetch('https://unpkg.com/mdui@2/mdui.css')
                     .then(response => response.text())
                     .then(css => {
-                        localStorage.setItem('mdui.css', css);
-                        console.log('mdui.css已存入缓存');
-                    });
+                    localStorage.setItem('mdui.css', css);
+                    console.log('mdui.css已存入缓存');
+                });
             }
 
             if (cachedMDIcon) {
@@ -94,9 +97,9 @@
                 fetch('https://fonts.googleapis.com/icon?family=Material+Icons+Two+Tone')
                     .then(response => response.text())
                     .then(css => {
-                        localStorage.setItem('MDIcon.css', css);
-                        console.log('Material Icons已存入缓存');
-                    });
+                    localStorage.setItem('MDIcon.css', css);
+                    console.log('Material Icons已存入缓存');
+                });
             }
 
             if (cachedJS) {
@@ -114,9 +117,9 @@
                 fetch('https://unpkg.com/mdui@2/mdui.global.js')
                     .then(response => response.text())
                     .then(js => {
-                        localStorage.setItem('mdui.global.js', js);
-                        console.log('mdui.global.js已存入缓存');
-                    });
+                    localStorage.setItem('mdui.global.js', js);
+                    console.log('mdui.global.js已存入缓存');
+                });
             }
 
         } else {
@@ -130,7 +133,7 @@
     function removeElementsBySelector(selector) {
         var elements = document.querySelectorAll(selector);
         if (elements) {
-            elements.forEach(function (element) {
+            elements.forEach(function(element) {
                 element.remove();
                 return true
             });
@@ -145,7 +148,7 @@
         // 获取所有的表单元素
         var forms = document.getElementsByTagName('form');
         for (var i = 0; i < forms.length; i++) {
-            forms[i].addEventListener('submit', function (event) {
+            forms[i].addEventListener('submit', function(event) {
                 // 阻止默认的表单提交行为
                 event.preventDefault();
             });
@@ -157,7 +160,7 @@
         try {
             const dreamIdList = [];
             const response = await fetch(url, {
-                cache: 'no-store'  // 禁止使用磁盘缓存
+                cache: 'no-store' // 禁止使用磁盘缓存
             });
 
             if (!response.ok) {
@@ -203,22 +206,22 @@
     function getdreamById(DreamId) {
         // 返回一个新的 Promise 对象
         return fetch(`http://yume.ly/dream/${DreamId}`)
-            .then(response => response.text())  // 将响应内容作为文本返回
-            .then(html => {
-                // 创建一个临时的div元素来容纳返回的HTML内容
-                var tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                // 获取原始梦境
-                var entryClearit = tempDiv.querySelector('.entry.clearit');
-                // 隐藏评论
-                var comments = entryClearit.querySelector('.comments');
-                var firstChild = comments.children[0];
-                firstChild.firstElementChild.className = 'loadComments';
-                var secondChild = comments.children[1];
-                secondChild.setAttribute('style', 'display: none;');
-                // 返回整理后的梦境内容
-                return entryClearit;
-            });
+            .then(response => response.text()) // 将响应内容作为文本返回
+        .then(html => {
+            // 创建一个临时的div元素来容纳返回的HTML内容
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            // 获取原始梦境
+            var entryClearit = tempDiv.querySelector('.entry.clearit');
+            // 隐藏评论
+            var comments = entryClearit.querySelector('.comments');
+            var firstChild = comments.children[0];
+            firstChild.firstElementChild.className = 'loadComments';
+            var secondChild = comments.children[1];
+            secondChild.setAttribute('style', 'display: none;');
+            // 返回整理后的梦境内容
+            return entryClearit;
+        });
     }
 
     // 添加单个梦境
@@ -271,8 +274,11 @@
             scrollTopButton.setAttribute('icon', 'keyboard_arrow_up--two-tone');
             scrollTopButton.classList.add('floating-button'); // 添加浮动按钮的类名
             scrollTopButton.style = 'position: fixed; bottom: 100px; right: 20px; z-index: 1000;';
-            scrollTopButton.addEventListener('click', function () {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            scrollTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
 
             // 创建造梦按钮
@@ -332,7 +338,7 @@
             }
 
             // 监听页面滚动事件
-            window.addEventListener('scroll', function () {
+            window.addEventListener('scroll', function() {
                 if (!ticking) {
                     window.requestAnimationFrame(updateScroll);
                     ticking = true;
@@ -368,19 +374,19 @@
 
         // 获取所有 class="dream clearit" 的 div 元素
         var dreamDivs = document.querySelectorAll('div.dream.clearit');
-        dreamDivs.forEach(function (div) {
+        dreamDivs.forEach(function(div) {
             div.style.width = (columnsWidth - avatarMediumWidth) + 'px';
         });
 
         // 获取所有 class="comments" 的 div 元素
         var commentDivs = document.querySelectorAll('div.comments');
-        commentDivs.forEach(function (div) {
+        commentDivs.forEach(function(div) {
             div.style.width = (columnsWidth - avatarMediumWidth - 70) + 'px';
         });
 
         // 获取所有 class="content" 的 textarea 元素
         var commentDivs = document.querySelectorAll('textarea.content');
-        commentDivs.forEach(function (div) {
+        commentDivs.forEach(function(div) {
             div.style.width = (columnsWidth - avatarMediumWidth - 140) + 'px';
         });
     }
@@ -453,7 +459,7 @@
             var menu = document.createElement('mdui-menu');
 
             // 遍历原始元素下的所有链接标签，创建菜单项
-            element.querySelectorAll('a').forEach(function (tag) {
+            element.querySelectorAll('a').forEach(function(tag) {
                 var menuItem = document.createElement('mdui-menu-item');
                 menuItem.innerHTML = tag.innerHTML; // 使用链接的内容作为菜单项文本
                 menuItem.setAttribute('href', tag.getAttribute('href')); // 设置菜单项的链接地址
@@ -494,7 +500,7 @@
                 textarea.parentNode.replaceChild(mduiTextField, textarea);
 
                 // 添加点击事件监听器
-                mduiTextField.addEventListener('click', function () {
+                mduiTextField.addEventListener('click', function() {
                     var submitReply = mduiTextField.nextElementSibling;
                     // 切换显示状态
                     submitReply.style.display = 'block';
@@ -504,7 +510,7 @@
             // 找到所有要替换的原始 input 元素
             var inputBtn = document.querySelectorAll('input.inputBtn.tinyBtn');
 
-            inputBtn.forEach(function (inputSubmit) {
+            inputBtn.forEach(function(inputSubmit) {
                 // 创建新的 mdui-button 元素
                 var mduiButton = document.createElement('mdui-button');
                 mduiButton.textContent = '写好了';
@@ -514,7 +520,7 @@
                 mduiButton.style.marginTop = '10px';
 
                 // 添加点击事件监听器
-                mduiButton.addEventListener('click', function () {
+                mduiButton.addEventListener('click', function() {
                     var form = mduiButton.parentNode.parentNode;
                     var action = form.getAttribute('action');
                     const formhash = form.querySelector('[name="formhash"]').value;
@@ -530,7 +536,7 @@
                     // 发送 POST 请求
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', 'http://yume.ly' + action + '?ajax=1');
-                    xhr.onload = function () {
+                    xhr.onload = function() {
                         if (xhr.status === 200) {
                             console.log('请求成功');
                         } else {
@@ -543,7 +549,7 @@
             // 找到所有要替换的原始元素
             var cancelTips = document.querySelectorAll('a.cancel.tip');
 
-            cancelTips.forEach(function (cancelTip) {
+            cancelTips.forEach(function(cancelTip) {
                 // 创建新的 mdui-button 元素
                 var mduiBtn = document.createElement('mdui-button');
                 mduiBtn.setAttribute('variant', 'text');
@@ -554,7 +560,7 @@
                 mduiBtn.style.marginTop = '10px';
 
                 // 添加点击事件监听器
-                mduiBtn.addEventListener('click', function () {
+                mduiBtn.addEventListener('click', function() {
                     // 隐藏父节点
                     var parentElement = mduiBtn.parentNode;
                     parentElement.style.display = 'none';
@@ -697,7 +703,7 @@
 
             // 梦境类型
             var checkboxes = document.querySelectorAll('label.checkbox');
-            checkboxes.forEach(function (label) {
+            checkboxes.forEach(function(label) {
                 // 获取<label>下的<input>元素
                 var input = label.querySelector('input.checkbox');
                 // 获取input的name属性值
@@ -728,7 +734,7 @@
             document.body.appendChild(checkdialog);
 
             // 添加点击事件监听器
-            mduiBtn.addEventListener('click', function () {
+            mduiBtn.addEventListener('click', function() {
                 const formhash = document.querySelector('[name="formhash"]').value;
                 var title = document.getElementById('title').value;
                 var content = document.getElementById('content').value;
@@ -768,7 +774,7 @@
                     // 发送 POST 请求
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', 'http://yume.ly/dream/create');
-                    xhr.onload = function () {
+                    xhr.onload = function() {
                         if (xhr.status === 200) {
                             var finalUrl = xhr.responseURL;
                             // 跳转提示
@@ -794,8 +800,12 @@
                             jumpdialog.appendChild(jumpBtn);
 
                             // 添加点击事件监听器
-                            cancelBtn.addEventListener("click", () => { jumpdialog.open = false; });
-                            jumpBtn.addEventListener("click", () => { window.location.assign(finalUrl); });
+                            cancelBtn.addEventListener("click", () => {
+                                jumpdialog.open = false;
+                            });
+                            jumpBtn.addEventListener("click", () => {
+                                window.location.assign(finalUrl);
+                            });
                             // 在页面添加<mdui-dialog>
                             document.body.appendChild(jumpdialog);
                             jumpdialog.setAttribute('open', true);
@@ -818,7 +828,7 @@
     // 仅自己图标优化
     async function optLock() {
         // 替换所有符合条件的图片
-        document.querySelectorAll('img[alt="仅自己可见"]').forEach(function (img) {
+        document.querySelectorAll('img[alt="仅自己可见"]').forEach(function(img) {
             // 创建一个新的 mdui-icon 元素
             var mduiIcon = document.createElement('mdui-icon');
             mduiIcon.setAttribute('name', 'lock--two-tone');
@@ -868,7 +878,7 @@
                 // 遍历所有的 loadComments 链接
                 comments.forEach(comment => {
                     // 添加点击事件监听器
-                    comment.addEventListener('click', function (event) {
+                    comment.addEventListener('click', function(event) {
                         event.preventDefault(); // 阻止默认链接行为
 
                         // 获取父节点的下一个兄弟节点
@@ -1016,6 +1026,68 @@
 
     }
 
+
+    // 自动登录
+    function autoLogin() {
+        var element = document.querySelector('a[href="/signin"]')
+        if (element) {
+            // 未登录弹窗
+            var logindialog = document.createElement('mdui-dialog');
+            logindialog.setAttribute('headline', '你好像没有登录, 正在登录中...');
+            logindialog.setAttribute('open', true);
+            // 添加线性进度指示器
+            var linear = document.createElement("mdui-linear-progress");
+            // 将线性进度指示器添加到对话框中
+            logindialog.appendChild(linear);
+            // 在页面添加<mdui-dialog>
+            document.body.appendChild(logindialog);
+            console.log('未登录');
+            fetch('http://yume.ly/signin')
+                .then(response => response.text())
+                .then(html => {
+                // 创建一个临时的 div 元素来容纳返回的 HTML 内容
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                // 查找 input[name="formhash"] 元素
+                var formhash = tempDiv.querySelector('input[name="formhash"]').value; // // 构建要发送的数据对象
+                var formData = new FormData();
+                formData.append('formhash', formhash);
+                formData.append('referer', 'http://yume.ly/signin');
+                formData.append('formhash', formhash);
+                formData.append('email', email);
+                formData.append('password', password);
+                formData.append('loginsubmit', '登录');
+
+                // 发送 POST 请求
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://yume.ly/signin');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('请求成功');
+                        // 判断是否存在系统消息
+                        var responseText = xhr.responseText;
+                        var parser = new DOMParser();
+                        var htmlDoc = parser.parseFromString(responseText, 'text/html');
+                        var messageDiv = htmlDoc.querySelector('div.message');
+                        if (messageDiv) {
+                            console.log('登录失败');
+                            logindialog.setAttribute('headline', '登录失败, 请设置正确的账户信息');
+                        } else {
+                            console.log('登录成功');
+                            logindialog.setAttribute('headline', '登录成功');
+                            location.reload();
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                };
+                xhr.send(formData);
+            });
+        }
+
+    }
+
+
     // 用户选项初始化
     function init() {
         if (enableload) {
@@ -1026,7 +1098,7 @@
         }
 
         if (enableAddFAB) {
-            addFAB()
+            addFAB();
         }
 
         if (enableRemovePanel) {
@@ -1039,7 +1111,9 @@
 
         if (enableRemovePanel) {
             removePanel();
-        } if (enableOptTags) {
+
+        }
+        if (enableOptTags) {
             optTags();
         }
 
@@ -1058,6 +1132,10 @@
         }
         if (enableOptPagePoints) {
             optPagePoints();
+        }
+
+        if (enableAutoLogin) {
+            autoLogin();
         }
     }
 
