@@ -20,13 +20,13 @@
 需要浏览器装有 [Tampermonkey](https://tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/) 插件, 下方表格中挑一个链接安装.
 
 **注意事项**
-- **⚠ 使用正式版 (GitHub 源) 和预览版须翻墙.**
+- **⚠ 使用正式版 (GitHub 源) 和Beta版须翻墙.**
 - 默认不对未登录的状态做适配.
 - 新版本一旦正式发布, 就不再对旧版本做任何技术支持.
 
-| 正式版 (jsDelivr 源)                                                                                  | 正式版 (GitHub 源)                                                                                      |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [安装](https://cdn.jsdelivr.net/gh/Memory2314/YUME-Evolved@master-cdn/YUME-Evolved.user.js) | [安装](https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/YUME-Evolved.user.js) |
+| 正式版 (jsDelivr 源)                                                                              | 正式版 (GitHub 源)                                                                                      | Beta版 (GitHub 源)                                                                                |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [安装](https://cdn.jsdelivr.net/gh/Memory2314/YUME-Evolved@master-cdn/dist/YUME-Evolved.user.js) | [安装](https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved.user.js) | [安装](https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js) |
 
 # 功能
 

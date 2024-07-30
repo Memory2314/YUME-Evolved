@@ -1,8 +1,10 @@
 // ==UserScript==
-// @name         YUME-Evolved
+// @name         YUME-Evolved (Beta)
+// @description  YUME 的测试版, 可以抢先体验新功能.
 // @namespace    https://github.com/Memory2314/YUME-Evolved
-// @version      1.0
-// @description  强大的梦乡增强脚本
+// @updateURL       https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
+// @downloadURL     https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
+// @version      1.0.0.20240730_beta
 // @author       Memory
 // @match        *://*.yume.ly/*
 // @grant        none
