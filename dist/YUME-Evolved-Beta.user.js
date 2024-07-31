@@ -4,7 +4,7 @@
 // @namespace    https://github.com/Memory2314/YUME-Evolved
 // @updateURL       https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
 // @downloadURL     https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
-// @version      1.0.1.20240731_beta
+// @version      1.0.1.20240801_beta
 // @author       Memory
 // @match        *://*.yume.ly/*
 // @grant        GM_getValue
@@ -109,7 +109,7 @@
         parent.appendChild(checkbox);
         parent.appendChild(document.createElement('br'));
     }
-    
+
     // 添加单个输入框设置项
     function addInputField(parent, fieldName, label, value, type = 'text') {
         let input = document.createElement('mdui-text-field');
@@ -124,7 +124,7 @@
         parent.appendChild(input);
         parent.appendChild(document.createElement('br'));
     }
-    
+
     // 保存设置
     function saveSettings() {
         alert('设置已保存');
@@ -1140,6 +1140,13 @@
 
     // 自动登录
     function autoLogin() {
+        var url = window.location.href;
+        // 检查是否为登出
+        let pattern = /^http:\/\/yume\.ly\/logout\/.*/;
+        if (pattern.test(url)) {
+            console.log("网址符合要求");
+            return;
+        }
         var element = document.querySelector('a[href="/signin"]')
         if (element) {
             // 未登录弹窗
