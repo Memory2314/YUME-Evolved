@@ -4,31 +4,142 @@
 // @namespace    https://github.com/Memory2314/YUME-Evolved
 // @updateURL       https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
 // @downloadURL     https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
-// @version      1.0.1.20240730_beta
+// @version      1.0.1.20240731_beta
 // @author       Memory
 // @match        *://*.yume.ly/*
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addStyle
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    // 用户选项 可控制开启(true)或关闭(false)
-    let enableCache = false; // 默认开启缓存, 建议开启
-    var apiUrl = 'https://raw.gitmirror.com/Memory2314/YUME-API-collect/main/api/dream/alive'; // api地址
-    var enableDisableFormSubmission = false; // 禁止表单提交行为(用于修复替换后回车提交刷新的bug), 建议开启
-    var enableAddFAB = false; // 主页浮动按钮
-    var enableRemovePanel = false; // 移除公告
-    var enableRemoveTips = false; // 移除造梦提示
-    var enableOptTags = false; // Tags优化
-    var enableOptComments = false; // 评论区优化
-    var enableOptCreateDream = false; // 造梦优化
-    var enableOptLock = false; // 仅自己图标优化
-    var enableOptWorldLine = false; // 世界线优化
-    var enableOptPagePoints = false; // 页面指示器优化
-    var enableAutoLogin = false; // 自动登录
-    var email = 'YourEmail'; // 你的用户名或Email地址
-    var password = 'YourPassword'; // 你的密码
+    // 默认设置
+    let enableCache = GM_getValue('enableCache', true);
+    let apiUrl = GM_getValue('apiUrl', 'https://raw.gitmirror.com/Memory2314/YUME-API-collect/main/api/dream/alive');
+    let enableDisableFormSubmission = GM_getValue('enableDisableFormSubmission', true);
+    let enableAddFAB = GM_getValue('enableAddFAB', false);
+    let enableRemovePanel = GM_getValue('enableRemovePanel', false);
+    let enableRemoveTips = GM_getValue('enableRemoveTips', false);
+    let enableOptTags = GM_getValue('enableOptTags', false);
+    let enableOptComments = GM_getValue('enableOptComments', false);
+    let enableOptCreateDream = GM_getValue('enableOptCreateDream', false);
+    let enableOptLock = GM_getValue('enableOptLock', false);
+    let enableOptWorldLine = GM_getValue('enableOptWorldLine', false);
+    let enableOptPagePoints = GM_getValue('enableOptPagePoints', false);
+    let enableAutoLogin = GM_getValue('enableAutoLogin', false);
+    let email = GM_getValue('email', '');
+    let password = GM_getValue('password', '');
+
+    // 添加设置管理菜单按钮
+    function addSettingsMenu() {
+        let menuBtn = document.createElement('mdui-button');
+        menuBtn.textContent = '设置';
+        menuBtn.setAttribute('variant', 'filled');
+        menuBtn.style.position = 'fixed';
+        menuBtn.style.top = '10px';
+        menuBtn.style.right = '10px';
+        menuBtn.style.padding = '10px';
+        menuBtn.style.border = '1px solid #666';
+        menuBtn.style.cursor = 'pointer';
+        menuBtn.addEventListener('click', toggleSettingsPanel);
+        document.body.appendChild(menuBtn);
+    }
+
+    // 切换显示设置面板
+    function toggleSettingsPanel() {
+        let panel = document.getElementById('settingsPanel');
+        if (!panel) {
+            createSettingsPanel();
+        } else {
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    // 创建设置面板
+    function createSettingsPanel() {
+        let panel = document.createElement('mdui-card');
+        panel.id = 'settingsPanel';
+        panel.setAttribute('variant', 'filled');
+        panel.style.position = 'fixed';
+        panel.style.top = '30px';
+        panel.style.right = '10px';
+        panel.style.border = '1px solid #ccc';
+        panel.style.padding = '10px';
+        panel.style.display = 'block';
+
+        // 添加每个设置项
+        addSettingCheckbox(panel, 'enableCache', '启用缓存', enableCache);
+        addInputField(panel, 'apiUrl', 'api地址', apiUrl);
+        addSettingCheckbox(panel, 'enableDisableFormSubmission', '禁止表单提交行为', enableDisableFormSubmission);
+        addSettingCheckbox(panel, 'enableAddFAB', '主页浮动按钮', enableAddFAB);
+        addSettingCheckbox(panel, 'enableRemovePanel', '移除公共', enableRemovePanel);
+        addSettingCheckbox(panel, 'enableRemoveTips', '移除造梦提示', enableRemoveTips);
+        addSettingCheckbox(panel, 'enableOptTags', 'Tags优化', enableOptTags);
+        addSettingCheckbox(panel, 'enableOptComments', '评论区优化', enableOptComments);
+        addSettingCheckbox(panel, 'enableOptCreateDream', '造梦优化', enableOptCreateDream);
+        addSettingCheckbox(panel, 'enableOptLock', '仅自己图标优化', enableOptLock);
+        addSettingCheckbox(panel, 'enableOptWorldLine', '世界线', enableOptWorldLine);
+        addSettingCheckbox(panel, 'enableOptPagePoints', '页面指示器优化', enableOptPagePoints);
+        addSettingCheckbox(panel, 'enableAutoLogin', '自动登录', enableAutoLogin);
+        addInputField(panel, 'email', '邮箱', email);
+        addInputField(panel, 'password', '密码', password, 'password');
+        panel.appendChild(document.createElement('br'));
+
+        // 添加保存按钮
+        let saveButton = document.createElement('mdui-button');
+        saveButton.textContent = '保存';
+        saveButton.addEventListener('click', saveSettings);
+        panel.appendChild(saveButton);
+
+        document.body.appendChild(panel);
+    }
+
+    // 添加单个设置复选框
+    function addSettingCheckbox(parent, settingName, label, value) {
+        let checkbox = document.createElement('mdui-checkbox');
+        checkbox.id = settingName;
+        checkbox.checked = value;
+        checkbox.textContent = label;
+        checkbox.addEventListener('change', function() {
+            GM_setValue(settingName, checkbox.checked);
+        });
+
+        parent.appendChild(checkbox);
+        parent.appendChild(document.createElement('br'));
+    }
+    
+    // 添加单个输入框设置项
+    function addInputField(parent, fieldName, label, value, type = 'text') {
+        let input = document.createElement('mdui-text-field');
+        input.type = type;
+        input.id = fieldName;
+        input.value = value;
+        input.label = label;
+        input.addEventListener('input', function() {
+            GM_setValue(fieldName, input.value);
+        });
+
+        parent.appendChild(input);
+        parent.appendChild(document.createElement('br'));
+    }
+    
+    // 保存设置
+    function saveSettings() {
+        alert('设置已保存');
+        toggleSettingsPanel(); // 关闭设置面板
+    }
+
+    // 添加样式
+    GM_addStyle(`
+        #settingsPanel {
+            display: none;
+        }
+    `);
+
+    // 初始化
+    addSettingsMenu();
 
     // 开发者选项
     var enableload = true; // 启用初始化加载
