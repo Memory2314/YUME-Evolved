@@ -4,7 +4,10 @@
 // @namespace    https://github.com/Memory2314/YUME-Evolved
 // @updateURL       https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
 // @downloadURL     https://raw.githubusercontent.com/Memory2314/YUME-Evolved/master/dist/YUME-Evolved-Beta.user.js
-// @version      1.0.1.20240801_beta
+// @version      1.0.1.20241001_beta
+// @note         1.0.1.20241001 修复登录失败问题
+// @note         1.0.1.20240731 添加设置UI
+// @note         1.0.1.20240730 添加登录
 // @author       Memory
 // @match        *://*.yume.ly/*
 // @grant        GM_getValue
@@ -1190,6 +1193,8 @@
                         if (messageDiv) {
                             console.log('登录失败');
                             logindialog.setAttribute('headline', '登录失败, 请设置正确的账户信息');
+                            logindialog.setAttribute('description', '点击空白处关闭');
+                            logindialog.setAttribute('close-on-overlay-click', true);
                         } else {
                             console.log('登录成功');
                             logindialog.setAttribute('headline', '登录成功');
